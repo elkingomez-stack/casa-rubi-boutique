@@ -319,10 +319,6 @@ document.querySelectorAll('[data-wa]').forEach((a) => {
   a.rel = 'noopener';
 });
 
-/* ───── Franja: el texto se duplica para que el bucle no tenga costura ───── */
-const track = document.querySelector('.marquee-track');
-track.append(...[...track.children].map((n) => n.cloneNode(true)));
-
 /* ───── Menú móvil ───── */
 const menuBtn = document.querySelector('.menu-btn');
 const menuEl = document.getElementById('menu');

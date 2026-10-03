@@ -370,36 +370,8 @@ html { scrollbar-color: var(--ash) var(--paper); scrollbar-width: thin; }
 .rail.is-dragging { scroll-snap-type: none; cursor: grabbing; }
 .rail.is-dragging .card-hit { pointer-events: none; }
 
-/* ───── Franja en movimiento ───── */
-.marquee {
-  margin-top: var(--section);
-  background: var(--wine);
-  color: var(--cream);
-  overflow: hidden;
-  padding: clamp(18px, 2.4vw, 28px) 0;
-  --gem-line: rgba(255, 255, 255, .25);
-  --gem-spark: var(--gold-soft);
-}
-.marquee-track {
-  display: flex; align-items: center; gap: clamp(28px, 3.5vw, 48px);
-  width: max-content;
-  padding-right: clamp(28px, 3.5vw, 48px);
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 52px);
-  line-height: 1;
-  letter-spacing: -.01em;
-  white-space: nowrap;
-}
-.marquee-track em { font-style: italic; color: var(--gold-soft); }
-.marquee-gem { width: .62em; height: .58em; flex: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .marquee-track { animation: marquee 38s linear infinite; }
-  .marquee:hover .marquee-track { animation-play-state: paused; }
-}
-@keyframes marquee { to { transform: translateX(-50%); } }
-
 /* ───── Historia / visita ───── */
-.story { background: var(--stone); padding: var(--section) 0; }
+.story { background: var(--stone); padding: var(--section) 0; margin-top: var(--section); }
 .story-inner {
   max-width: var(--page);
   margin: 0 auto;
