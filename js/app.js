@@ -303,14 +303,54 @@ qv.addEventListener('keydown', (e) => {
   handle.addEventListener('pointercancel', end);
 })();
 
-/* ───── Destello de la gema al pasar el cursor por el logo ───── */
+/* ───── Destello de la gema: cada 7 s, al pasar el cursor o al tocar el logo ───── */
 const gem = document.querySelector('.gem-live');
-document.querySelector('.site-header .logo').addEventListener('mouseenter', () => {
-  if (reduceMotion.matches || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  gem.classList.remove('is-glinting');
-  void gem.getBoundingClientRect();
-  gem.classList.add('is-glinting');
+const logo = document.querySelector('.site-header .logo');
+const GLINT_EVERY = 7000;
+const INTRO_MS = 2600;           // la entrada de la gema dura ~2,6 s
+let logoVisible = true;
+let lastGlint = performance.now();
+
+const glintRect = gem.querySelector('.glint');
+const sparks = [...gem.querySelectorAll('.spark')];
+const EASE_IN_OUT = 'cubic-bezier(.77, 0, .175, 1)';
+const EASE_OUT = 'cubic-bezier(.23, 1, .32, 1)';
+
+// Luz que cruza la gema + resplandor rubí + chispitas que titilan.
+// Con la Web Animations API cada destello arranca de cero aunque se repita.
+function glint() {
+  if (reduceMotion.matches) return;
+  lastGlint = performance.now();
+  gem.animate([
+    { filter: 'drop-shadow(0 0 0 rgba(210, 58, 75, 0))' },
+    { filter: 'drop-shadow(0 1px 6px rgba(210, 58, 75, .55))', offset: .45 },
+    { filter: 'drop-shadow(0 0 0 rgba(210, 58, 75, 0))' },
+  ], { duration: 1100, easing: 'ease-in-out' });
+  glintRect.animate(
+    [{ transform: 'translateX(0)' }, { transform: 'translateX(84px)' }],
+    { duration: 900, delay: 60, easing: EASE_IN_OUT });
+  sparks.forEach((s, i) => s.animate([
+    { transform: 'scale(1) rotate(0deg)', opacity: 1 },
+    { transform: 'scale(1.7) rotate(45deg)', opacity: .7, offset: .45 },
+    { transform: 'scale(1) rotate(0deg)', opacity: 1 },
+  ], { duration: 700, delay: 420 + i * 90, easing: EASE_OUT }));
+}
+
+logo.addEventListener('mouseenter', () => {
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) glint();
 });
+logo.addEventListener('touchstart', glint, { passive: true });
+
+// Solo brilla si el logo está a la vista y la pestaña abierta.
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(([e]) => { logoVisible = e.isIntersecting; }).observe(gem);
+}
+setTimeout(() => {
+  setInterval(() => {
+    if (document.hidden || !logoVisible) return;
+    if (performance.now() - lastGlint >= GLINT_EVERY - 50) glint();
+  }, 1000);
+}, INTRO_MS);
 
 /* ───── Enlaces generales de WhatsApp ───── */
 document.querySelectorAll('[data-wa]').forEach((a) => {
